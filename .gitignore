@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.db
+backend/.venv/
+backend/uploads/*
+!backend/uploads/default_poster.png
+frontend/node_modules/
+frontend/dist/
+.env
