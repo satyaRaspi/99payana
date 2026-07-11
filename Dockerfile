@@ -1,9 +1,10 @@
-FROM node:20-bookworm AS frontend-build
+FROM node:20-bookworm-slim AS frontend-build
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install --include=dev --no-audit --no-fund
+ENV NODE_ENV=development
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --include=dev --no-audit --no-fund
 COPY frontend/ ./
-RUN npm run build
+RUN ./node_modules/.bin/vite build
 
 FROM python:3.11-slim
 WORKDIR /app
