@@ -342,3 +342,40 @@ tr:hover td { background: #fffaf3; }
 @media (max-width: 760px) {
   .bar-row, .score-row { grid-template-columns: 1fr; gap: 6px; }
 }
+
+/* v1.2.44 - White form backgrounds */
+.form-card,
+.wide-form-card,
+.card.form-card,
+.card.wide-form-card,
+.registration-form,
+.survey-section,
+.modal-content,
+.dialog-card,
+.settings-card {
+  background: #ffffff !important;
+}
+
+form,
+.grid-form,
+.form-card form,
+.wide-form-card form {
+  background: #ffffff;
+}
+
+input,
+select,
+textarea {
+  background-color: #ffffff !important;
+}
+
+label {
+  background: transparent;
+}
+
+.notice,
+.notice.success,
+.notice.error {
+  background: #ffffff;
+}
+
