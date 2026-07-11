@@ -1,0 +1,7 @@
+backend/payana.db
+backend/uploads/*
+frontend/node_modules
+frontend/dist
+.venv
+__pycache__
+*.pyc
