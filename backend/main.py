@@ -21,7 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 APP_NAME = "Payana Screening Registration"
-APP_VERSION = "1.2.39"
+APP_VERSION = "1.2.40"
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "payana.db"
 UPLOAD_DIR = BASE_DIR / "uploads"
