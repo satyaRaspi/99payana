@@ -1,12 +1,9 @@
-Payana v1.2.42 Clean Railway Deploy
+Payana v1.2.43 Clean Railway Deploy
 
-Railway error '/frontend/dist: not found' means frontend/dist was not committed to GitHub.
-
-This build includes:
-- frontend/dist/index.html
-- frontend/dist/assets/*
-- .gitignore override to allow frontend/dist
+Fixes:
+- /api/landing NameError: get_config missing
 - Python-only Dockerfile
+- frontend/dist committed
 
 Important Git command:
 git add -f frontend/dist

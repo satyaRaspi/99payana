@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || (window.location.port === '5173' ? 'http://localhost:8000' : '');
-const VERSION = '1.2.42';
+const VERSION = '1.2.43';
 
 const emptyRegistration = { name: '', age_group: '', social_background: '', primary_language: '', phone_number: '', remarks: '' };
 const emptySurvey = {

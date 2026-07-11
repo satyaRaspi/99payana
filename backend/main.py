@@ -21,7 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 APP_NAME = "Payana Screening Registration"
-APP_VERSION = "1.2.42"
+APP_VERSION = "1.2.43"
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "payana.db"
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -1014,6 +1014,31 @@ def public_menu_pages() -> dict[str, Any]:
             "SELECT * FROM page_settings WHERE page_type = 'public' ORDER BY display_order, page_key"
         ).fetchall()
         return {"items": [dict(r) for r in rows]}
+
+
+
+def get_config(conn: sqlite3.Connection) -> dict[str, str]:
+    """Return app configuration as a dictionary."""
+    try:
+        rows = conn.execute("SELECT key, value FROM app_config").fetchall()
+        return {r["key"]: r["value"] for r in rows}
+    except sqlite3.Error:
+        return {}
+
+
+def landing_button_settings_from_config(config: dict[str, Any]) -> dict[str, bool]:
+    """Return landing-button visibility settings with safe defaults."""
+    def as_bool(key: str, default: bool = True) -> bool:
+        value = config.get(key)
+        if value is None or value == "":
+            return default
+        return str(value).strip().lower() in {"1", "true", "yes", "on", "show"}
+
+    return {
+        "show_registration_button": as_bool("show_registration_button", True),
+        "show_survey_button": as_bool("show_survey_button", True),
+        "show_feedback_qr_button": as_bool("show_feedback_qr_button", True),
+    }
 
 
 @app.get("/api/landing")
