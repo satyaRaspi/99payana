@@ -8,3 +8,10 @@ backend/uploads/*
 frontend/node_modules/
 frontend/dist/
 .env
+
+# Keep frontend build output for Railway Python-only Docker deploy
+!frontend/dist/
+!frontend/dist/**
+frontend/node_modules/
+backend/payana.db
+backend/uploads/

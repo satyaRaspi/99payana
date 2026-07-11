@@ -1,17 +1,12 @@
-Payana Screening Registration v1.2.41 - Clean Railway Build
+Payana v1.2.42 Clean Railway Deploy
 
-This package uses a Python-only Dockerfile.
-Railway should NOT show:
-- frontend-build
-- npm install
-- npm ci
-- vite build
+Railway error '/frontend/dist: not found' means frontend/dist was not committed to GitHub.
 
-The frontend is already built and committed inside:
-frontend/dist/
+This build includes:
+- frontend/dist/index.html
+- frontend/dist/assets/*
+- .gitignore override to allow frontend/dist
+- Python-only Dockerfile
 
-Railway should only run:
-- pip install -r backend/requirements.txt
-- uvicorn backend.main:app
-
-If Railway still shows frontend-build, GitHub still has an old Dockerfile.
+Important Git command:
+git add -f frontend/dist
