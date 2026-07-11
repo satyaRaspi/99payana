@@ -21,7 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 APP_NAME = "Payana Screening Registration"
-APP_VERSION = "1.2.36"
+APP_VERSION = "1.2.37"
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "payana.db"
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -2202,5 +2202,56 @@ def create_test_data(count: int = Query(default=50, ge=1, le=500), user: dict[st
         "feedback_created": feedback_created,
         "custom_answers_created": custom_answers_created,
         "message": "Test registration and feedback analytics data created successfully."
+    }
+
+
+
+
+# Railway / production single-service frontend hosting
+# In Railway, the React build is expected at frontend/dist. The backend serves
+# the built SPA at "/" and keeps all /api routes handled above.
+DEFAULT_STATIC_DIR = BASE_DIR.parent / "frontend" / "dist"
+STATIC_DIR = Path(os.getenv("STATIC_DIR", str(DEFAULT_STATIC_DIR)))
+
+@app.get("/", include_in_schema=False)
+def production_root():
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {
+        "app": APP_NAME,
+        "version": APP_VERSION,
+        "status": "backend_running",
+        "message": "Frontend build not found. Run npm install && npm run build in frontend, or set STATIC_DIR to the built frontend/dist folder.",
+        "api_health": "/api/health"
+    }
+
+if STATIC_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+    # Serve common static files in frontend/dist root when available.
+    for static_name in ["vite.svg", "favicon.ico", "payana_feedback_qr.png", "default_poster.png"]:
+        static_file = STATIC_DIR / static_name
+        if static_file.exists():
+            @app.get(f"/{static_name}", include_in_schema=False)
+            def serve_static_file(static_name: str = static_name):
+                return FileResponse(STATIC_DIR / static_name)
+
+@app.get("/{full_path:path}", include_in_schema=False)
+def serve_spa_fallback(full_path: str):
+    # Never swallow API requests. Let FastAPI return normal API 404 for /api/*.
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+    requested = STATIC_DIR / full_path
+    if STATIC_DIR.exists() and requested.exists() and requested.is_file():
+        return FileResponse(requested)
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {
+        "app": APP_NAME,
+        "version": APP_VERSION,
+        "status": "backend_running",
+        "message": "Frontend build not found. Build frontend before deployment or check Railway build command.",
+        "api_health": "/api/health"
     }
 
