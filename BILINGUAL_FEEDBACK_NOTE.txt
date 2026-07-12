@@ -1,0 +1,8 @@
+Payana v1.2.45
+
+Feedback form dropdown options are now bilingual:
+English / Kannada
+
+Frontend dist is rebuilt and included for Railway deployment.
+Remember:
+git add -f frontend/dist

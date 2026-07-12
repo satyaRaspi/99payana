@@ -3,7 +3,216 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || (window.location.port === '5173' ? 'http://localhost:8000' : '');
-const VERSION = '1.2.44';
+const VERSION = '1.2.53';
+
+const FEEDBACK_TEXT_KN = {
+  "Film": "ಚಿತ್ರ",
+  "Post-Screening Audience Survey": "ಪ್ರದರ್ಶನದ ನಂತರದ ಪ್ರೇಕ್ಷಕರ ಅಭಿಪ್ರಾಯ",
+  "This survey is for audience members after the screening. Phone number is used only for reference and will not be validated against registration.": "ಈ ಅಭಿಪ್ರಾಯ ಫಾರ್ಮ್ ಪ್ರದರ್ಶನದ ನಂತರ ಪ್ರೇಕ್ಷಕರಿಗಾಗಿ. ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಕೇವಲ ಉಲ್ಲೇಖಕ್ಕಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ.",
+  "Language": "ಭಾಷೆ",
+  "Kannada": "ಕನ್ನಡ",
+  "English": "English",
+  "Name": "ಹೆಸರು",
+  "Full name": "ಪೂರ್ಣ ಹೆಸರು",
+  "Phone Number / Reference": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ / ಉಲ್ಲೇಖ",
+  "Optional phone number or reference ID": "ಐಚ್ಛಿಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಥವಾ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ",
+  "Consent to contact for further discussion": "ಹೆಚ್ಚಿನ ಚರ್ಚೆಗೆ ಸಂಪರ್ಕಿಸಲು ಒಪ್ಪಿಗೆ",
+  "Overall Experience": "ಒಟ್ಟಾರೆ ಅನುಭವ",
+  "Story": "ಕಥೆ",
+  "Acting / Performances": "ನಟನೆ / ಅಭಿನಯ",
+  "Music / Sound": "ಸಂಗೀತ / ಧ್ವನಿ",
+  "Pace / Editing": "ವೇಗ / ಸಂಕಲನ",
+  "Emotional Impact": "ಭಾವನಾತ್ಮಕ ಪರಿಣಾಮ",
+  "Visual Quality / Cinematography": "ದೃಶ್ಯ ಗುಣಮಟ್ಟ / ಛಾಯಾಗ್ರಹಣ",
+  "Dialogues": "ಸಂಭಾಷಣೆ",
+  "Film Length": "ಚಿತ್ರದ ಅವಧಿ",
+  "Did you understand the story clearly?": "ಕಥೆ ನಿಮಗೆ ಸ್ಪಷ್ಟವಾಗಿ ಅರ್ಥವಾಯಿತೇ?",
+  "Did you connect with the characters?": "ಪಾತ್ರಗಳೊಂದಿಗೆ ನೀವು ಸಂಪರ್ಕ ಹೊಂದಿದಂತೆ ಅನಿಸಿತೇ?",
+  "Theatre or OTT fit?": "ಚಿತ್ರಮಂದಿರ ಅಥವಾ OTTಗೆ ಸೂಕ್ತವೇ?",
+  "Audience Type": "ಪ್ರೇಕ್ಷಕರ ಪ್ರಕಾರ",
+  "One-word reaction": "ಒಂದು ಪದದಲ್ಲಿ ಪ್ರತಿಕ್ರಿಯೆ",
+  "Who is the right audience for this film?": "ಈ ಚಿತ್ರಕ್ಕೆ ಸರಿಯಾದ ಪ್ರೇಕ್ಷಕರು ಯಾರು?",
+  "Can we use a short quote from your feedback?": "ನಿಮ್ಮ ಅಭಿಪ್ರಾಯದಿಂದ ಚಿಕ್ಕ ಉಲ್ಲೇಖವನ್ನು ಬಳಸಬಹುದೇ?",
+  "Would you recommend this film?": "ಈ ಚಿತ್ರವನ್ನು ನೀವು ಶಿಫಾರಸು ಮಾಡುತ್ತೀರಾ?",
+  "Can we contact you for detailed feedback?": "ವಿಸ್ತೃತ ಅಭಿಪ್ರಾಯಕ್ಕಾಗಿ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಬಹುದೇ?",
+  "What did you like the most?": "ನಿಮಗೆ ಹೆಚ್ಚು ಇಷ್ಟವಾದುದು ಏನು?",
+  "What can be improved?": "ಏನು ಸುಧಾರಿಸಬಹುದು?",
+  "Any memorable scene, character, or moment?": "ನೆನಪಿನಲ್ಲಿ ಉಳಿದ ದೃಶ್ಯ, ಪಾತ್ರ ಅಥವಾ ಕ್ಷಣ?",
+  "Additional Remarks": "ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿಗಳು",
+  "Submitting...": "ಸಲ್ಲಿಸಲಾಗುತ್ತಿದೆ...",
+  "Submit Feedback": "ಅಭಿಪ್ರಾಯ ಸಲ್ಲಿಸಿ",
+  "Select": "ಆಯ್ಕೆಮಾಡಿ",
+  "Thank you. Your feedback has been recorded.": "ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ದಾಖಲಿಸಲಾಗಿದೆ.",
+  "Excellent": "ಅತ್ಯುತ್ತಮ",
+  "Good": "ಚೆನ್ನಾಗಿದೆ",
+  "Average": "ಸರಾಸರಿ",
+  "Weak": "ದುರ್ಬಲ",
+  "Poor": "ಕಳಪೆ",
+  "Story & Emotions": "ಕಥೆ ಮತ್ತು ಭಾವನೆಗಳು",
+  "Pace & Editing": "ವೇಗ ಮತ್ತು ಸಂಕಲನ",
+  "Audience Fit": "ಪ್ರೇಕ್ಷಕರಿಗೆ ಸೂಕ್ತತೆ",
+  "One Honest Line": "ಒಂದು ನಿಷ್ಠಾವಂತ ಸಾಲು",
+  "Expectations & First Reaction": "ನಿರೀಕ್ಷೆಗಳು ಮತ್ತು ಮೊದಲ ಪ್ರತಿಕ್ರಿಯೆ",
+  "Story & Narrative": "ಕಥೆ ಮತ್ತು ನಿರೂಪಣೆ",
+  "Characters & Performances": "ಪಾತ್ರಗಳು ಮತ್ತು ಅಭಿನಯ",
+  "Pace, Length & Editing": "ವೇಗ, ಅವಧಿ ಮತ್ತು ಸಂಕಲನ",
+  "Emotional Connect": "ಭಾವನಾತ್ಮಕ ಸಂಪರ್ಕ",
+  "Music, Sound & Visuals": "ಸಂಗೀತ, ಧ್ವನಿ ಮತ್ತು ದೃಶ್ಯಗಳು",
+  "Overall Opinion": "ಒಟ್ಟಾರೆ ಅಭಿಪ್ರಾಯ",
+  "Audience Recommendation": "ಪ್ರೇಕ್ಷಕರಿಗೆ ಶಿಫಾರಸು",
+  "Final Feedback": "ಅಂತಿಮ ಅಭಿಪ್ರಾಯ",
+  "What were your expectations before watching the film?": "ಚಿತ್ರ ನೋಡುವ ಮೊದಲು ನಿಮ್ಮ ನಿರೀಕ್ಷೆಗಳು ಏನಾಗಿದ್ದವು?",
+  "What was your first reaction after watching the film?": "ಚಿತ್ರ ನೋಡಿದ ನಂತರ ನಿಮ್ಮ ಮೊದಲ ಪ್ರತಿಕ್ರಿಯೆ ಏನು?",
+  "Did the film meet your expectations?": "ಚಿತ್ರ ನಿಮ್ಮ ನಿರೀಕ್ಷೆಗಳನ್ನು ಪೂರೈಸಿತೇ?",
+  "Which part of the story worked best for you?": "ಕಥೆಯ ಯಾವ ಭಾಗ ನಿಮಗೆ ಹೆಚ್ಚು ಚೆನ್ನಾಗಿ ಕೆಲಸ ಮಾಡಿತು?",
+  "Which part of the story did not work for you?": "ಕಥೆಯ ಯಾವ ಭಾಗ ನಿಮಗೆ ಅಷ್ಟಾಗಿ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ?",
+  "Was any part of the story confusing?": "ಕಥೆಯ ಯಾವುದಾದರೂ ಭಾಗ ಗೊಂದಲಕಾರಕವಾಗಿತ್ತೇ?",
+  "Did the grandfather and grandson relationship connect with you?": "ತಾತ ಮತ್ತು ಮೊಮ್ಮಗನ ಸಂಬಂಧ ನಿಮಗೆ ಮನಸಿಗೆ ತಟ್ಟಿತೇ?",
+  "Did the grandfather and grandson bonding work for you?": "ತಾತ ಮತ್ತು ಮೊಮ್ಮಗನ ಬಾಂಧವ್ಯ ನಿಮಗೆ ಚೆನ್ನಾಗಿ ತಟ್ಟಿತೇ?",
+  "Which character did you like the most?": "ಯಾವ ಪಾತ್ರ ನಿಮಗೆ ಹೆಚ್ಚು ಇಷ್ಟವಾಯಿತು?",
+  "Which character did you not connect with?": "ಯಾವ ಪಾತ್ರದೊಂದಿಗೆ ನೀವು ಸಂಪರ್ಕ ಹೊಂದಲಿಲ್ಲ?",
+  "How were the performances?": "ಅಭಿನಯ ಹೇಗಿತ್ತು?",
+  "Did any performance stand out?": "ಯಾವುದಾದರೂ ಅಭಿನಯ ವಿಶೇಷವಾಗಿ ಗಮನ ಸೆಳೆಯಿತೇ?",
+  "Did the film feel slow anywhere?": "ಚಿತ್ರ ಯಾವುದಾದರೂ ಕಡೆ ನಿಧಾನವೆನಿಸಿತೇ?",
+  "Which portions felt slow?": "ಯಾವ ಭಾಗಗಳು ನಿಧಾನವೆನಿಸಿತು?",
+  "Which scenes felt slow?": "ಯಾವ ದೃಶ್ಯಗಳು ನಿಧಾನವೆನಿಸಿತು?",
+  "What would you remove or shorten?": "ನೀವು ಏನು ತೆಗೆದುಹಾಕಲು ಅಥವಾ ಕಡಿಮೆ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ?",
+  "Was the film length right?": "ಚಿತ್ರದ ಅವಧಿ ಸರಿಯಾಗಿತ್ತೇ?",
+  "Did the emotional moments work for you?": "ಭಾವನಾತ್ಮಕ ಕ್ಷಣಗಳು ನಿಮಗೆ ತಟ್ಟಿತೇ?",
+  "Which emotional moment worked best?": "ಯಾವ ಭಾವನಾತ್ಮಕ ಕ್ಷಣ ಹೆಚ್ಚು ಪರಿಣಾಮಕಾರಿಯಾಗಿತ್ತು?",
+  "Did you feel connected to the journey from Mysore to Jaipur?": "ಮೈಸೂರುದಿಂದ ಜೈಪುರದ ಪ್ರಯಾಣದೊಂದಿಗೆ ನಿಮಗೆ ಸಂಪರ್ಕ ಮೂಡಿತೇ?",
+  "Did the travel journey work for you?": "ಪ್ರಯಾಣದ ಭಾಗ ನಿಮಗೆ ಕೆಲಸ ಮಾಡಿತೇ?",
+  "How was the music?": "ಸಂಗೀತ ಹೇಗಿತ್ತು?",
+  "How was the background score?": "ಹಿನ್ನೆಲೆ ಸಂಗೀತ ಹೇಗಿತ್ತು?",
+  "How were the visuals and cinematography?": "ದೃಶ್ಯಗಳು ಮತ್ತು ಛಾಯಾಗ್ರಹಣ ಹೇಗಿತ್ತು?",
+  "How was the sound design?": "ಧ್ವನಿ ವಿನ್ಯಾಸ ಹೇಗಿತ್ತು?",
+  "What did you not like?": "ನಿಮಗೆ ಏನು ಇಷ್ಟವಾಗಲಿಲ್ಲ?",
+  "What would you change in the film?": "ಚಿತ್ರದಲ್ಲಿ ನೀವು ಏನು ಬದಲಾಯಿಸುತ್ತೀರಿ?",
+  "Would you recommend this film to others?": "ಈ ಚಿತ್ರವನ್ನು ನೀವು ಇತರರಿಗೆ ಶಿಫಾರಸು ಮಾಡುತ್ತೀರಾ?",
+  "Would this film work in theatres?": "ಈ ಚಿತ್ರ ಚಿತ್ರಮಂದಿರಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ?",
+  "Would this film work on OTT?": "ಈ ಚಿತ್ರ OTTಯಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆಯೇ?",
+  "Write one honest line to the director.": "ನಿರ್ದೇಶಕರಿಗೆ ಒಂದು ನಿಷ್ಠಾವಂತ ಸಾಲು ಬರೆಯಿರಿ.",
+  "Write one honest line to the editor.": "ಸಂಕಲನಕಾರರಿಗೆ ಒಂದು ನಿಷ್ಠಾವಂತ ಸಾಲು ಬರೆಯಿರಿ.",
+  "Any final comments?": "ಕೊನೆಯಾಗಿ ಹೇಳಲು ಏನಾದರೂ ಇದೆಯೇ?",
+  "Any other feedback?": "ಇನ್ನೇನಾದರೂ ಅಭಿಪ್ರಾಯ ಇದೆಯೇ?",
+  "Additional feedback": "ಹೆಚ್ಚುವರಿ ಅಭಿಪ್ರಾಯ",
+  "Please explain": "ದಯವಿಟ್ಟು ವಿವರಿಸಿ",
+  "Why?": "ಏಕೆ?",
+  "Explain briefly": "ಸಂಕ್ಷಿಪ್ತವಾಗಿ ವಿವರಿಸಿ",
+  "After Screening: Honest Film Feedback": "ಪ್ರದರ್ಶನದ ನಂತರ: ನಿಷ್ಠಾವಂತ ಚಿತ್ರದ ಅಭಿಪ್ರಾಯ",
+  "Be direct. This helps the makers improve positioning and edits.": "ನೇರವಾಗಿ ಹೇಳಿ. ಇದು ನಿರ್ಮಾಪಕರಿಗೆ ಚಿತ್ರದ ಸ್ಥಾನೀಕರಣ ಮತ್ತು ಸಂಕಲನವನ್ನು ಸುಧಾರಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.",
+  "What are the strongest/highest points of the film?": "ಚಿತ್ರದ ಅತ್ಯಂತ ಬಲವಾದ / ಉತ್ತಮ ಅಂಶಗಳು ಯಾವುವು?",
+  "What are the weakest/lowest points of the film?": "ಚಿತ್ರದ ದುರ್ಬಲ / ಕಡಿಮೆ ಕೆಲಸ ಮಾಡಿದ ಅಂಶಗಳು ಯಾವುವು?",
+  "What did you not like or find unconvincing?": "ನಿಮಗೆ ಏನು ಇಷ್ಟವಾಗಲಿಲ್ಲ ಅಥವಾ ನಂಬಿಕೆಯಾಗಲಿಲ್ಲ?",
+  "How strong is the grandfather-grandson emotional bonding?": "ತಾತ ಮತ್ತು ಮೊಮ್ಮಗನ ಭಾವನಾತ್ಮಕ ಬಾಂಧವ್ಯ ಎಷ್ಟು ಬಲವಾಗಿದೆ?",
+  "How engaging is the antique camera journey from Mysore to Jaipur?": "ಮೈಸೂರುದಿಂದ ಜೈಪುರದವರೆಗೆ ನಡೆಯುವ ಪುರಾತನ ಕ್ಯಾಮೆರಾ ಪ್ರಯಾಣ ಎಷ್ಟು ಹಿಡಿದಿಡುತ್ತದೆ?",
+  "Pace, Length & Removal Suggestions": "ವೇಗ, ಅವಧಿ ಮತ್ತು ತೆಗೆದುಹಾಕುವ ಸಲಹೆಗಳು",
+  "Tell us what felt slow, unnecessary, or confusing.": "ನಿಧಾನ, ಅನಗತ್ಯ ಅಥವಾ ಗೊಂದಲಕಾರಕವೆನಿಸಿದ ಭಾಗಗಳನ್ನು ನಮಗೆ ತಿಳಿಸಿ.",
+  "Which portions felt slow? Mention scenes or broad parts.": "ಯಾವ ಭಾಗಗಳು ನಿಧಾನವೆನಿಸಿತು? ದೃಶ್ಯಗಳು ಅಥವಾ ಪ್ರಮುಖ ಭಾಗಗಳನ್ನು ಉಲ್ಲೇಖಿಸಿ.",
+  "What would you remove, shorten, or rewrite?": "ನೀವು ಏನು ತೆಗೆದುಹಾಕಲು, ಕಡಿಮೆ ಮಾಡಲು ಅಥವಾ ಮರುಬರೆಯಲು ಬಯಸುತ್ತೀರಿ?",
+  "Was any part confusing or unclear?": "ಯಾವುದಾದರೂ ಭಾಗ ಗೊಂದಲಕಾರಕವಾಗಿತ್ತೇ ಅಥವಾ ಸ್ಪಷ್ಟವಾಗಿರಲಿಲ್ಲವೇ?",
+  "How did the film length feel?": "ಚಿತ್ರದ ಅವಧಿ ಹೇಗನಿಸಿತು?",
+  "Final Recommendation": "ಅಂತಿಮ ಶಿಫಾರಸು",
+  "Recommendation, audience fit, and permission to contact.": "ಶಿಫಾರಸು, ಸರಿಯಾದ ಪ್ರೇಕ್ಷಕರು ಮತ್ತು ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ.",
+  "One honest line to the director/editor.": "ನಿರ್ದೇಶಕ / ಸಂಕಲನಕಾರರಿಗೆ ಒಂದು ನಿಷ್ಠಾವಂತ ಸಾಲು.",
+  "Back": "ಹಿಂದೆ",
+  "Next": "ಮುಂದೆ",
+  "Previous": "ಹಿಂದೆ",
+  "Step": "ಹಂತ",
+  "of": "ರಲ್ಲಿ",
+  "Basic Details": "ಮೂಲ ವಿವರಗಳು",
+  "Ratings": "ಮೌಲ್ಯಮಾಪನ",
+  "More Feedback": "ಹೆಚ್ಚಿನ ಅಭಿಪ್ರಾಯ",
+  "Thank you for submitting": "ಸಲ್ಲಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು",
+  "Your feedback has been recorded.": "ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ದಾಖಲಿಸಲಾಗಿದೆ.",
+  "Your honest response will help the makers improve the film.": "ನಿಮ್ಮ ನಿಷ್ಠಾವಂತ ಪ್ರತಿಕ್ರಿಯೆ ಚಿತ್ರವನ್ನು ಇನ್ನಷ್ಟು ಉತ್ತಮಗೊಳಿಸಲು ನಿರ್ಮಾಪಕರಿಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ.",
+  "Submit another feedback": "ಮತ್ತೊಂದು ಅಭಿಪ್ರಾಯ ಸಲ್ಲಿಸಿ",
+  "Back to home": "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ"
+};
+
+const FEEDBACK_OPTION_KN = {
+  "General Audience": "ಸಾಮಾನ್ಯ ಪ್ರೇಕ್ಷಕರು",
+  "Family Audience": "ಕುಟುಂಬ ಪ್ರೇಕ್ಷಕರು",
+  "Youth Audience": "ಯುವ ಪ್ರೇಕ್ಷಕರು",
+  "Senior Citizens": "ಹಿರಿಯ ನಾಗರಿಕರು",
+  "Film / Media Background": "ಚಲನಚಿತ್ರ ಅಥವಾ ಮಾಧ್ಯಮ ಹಿನ್ನೆಲೆ",
+  "Artist / Creative Background": "ಕಲಾವಿದ ಅಥವಾ ಸೃಜನಾತ್ಮಕ ಹಿನ್ನೆಲೆ",
+  "Working Professionals": "ಉದ್ಯೋಗದಲ್ಲಿರುವ ವೃತ್ತಿಪರರು",
+  "Kannada Cinema Audience": "ಕನ್ನಡ ಚಿತ್ರರಂಗದ ಪ್ರೇಕ್ಷಕರು",
+  "Festival / Critic Audience": "ಚಿತ್ರೋತ್ಸವ ಅಥವಾ ವಿಮರ್ಶಕ ಪ್ರೇಕ್ಷಕರು",
+  "Mostly": "ಬಹುಪಾಲು",
+  "Partly": "ಭಾಗಶಃ",
+  "Not really": "ಅಷ್ಟಾಗಿ ಇಲ್ಲ",
+  "Not at all": "ಇಲ್ಲವೇ ಇಲ್ಲ",
+  "Yes": "ಹೌದು",
+  "No": "ಇಲ್ಲ",
+  "Maybe": "ಬಹುಶಃ",
+  "Too long": "ತುಂಬಾ ಉದ್ದವಾಗಿದೆ",
+  "Slightly long": "ಸ್ವಲ್ಪ ಉದ್ದವಾಗಿದೆ",
+  "Just right": "ಸರಿಯಾಗಿದೆ",
+  "Too short": "ತುಂಬಾ ಚಿಕ್ಕದಾಗಿದೆ",
+  "Family audience": "ಕುಟುಂಬ ಪ್ರೇಕ್ಷಕರು",
+  "Kannada cinema lovers": "ಕನ್ನಡ ಸಿನೆಮಾ ಪ್ರೇಮಿಗಳು",
+  "Drama lovers": "ನಾಟಕೀಯ ಕಥೆಗಳ ಅಭಿಮಾನಿಗಳು",
+  "Art-house/festival audience": "ಕಲಾತ್ಮಕ ಅಥವಾ ಚಿತ್ರೋತ್ಸವ ಪ್ರೇಕ್ಷಕರು",
+  "Urban audience": "ನಗರ ಪ್ರೇಕ್ಷಕರು",
+  "Tier-2/town audience": "ಪಟ್ಟಣ ಪ್ರೇಕ್ಷಕರು",
+  "Children and families": "ಮಕ್ಕಳು ಮತ್ತು ಕುಟುಂಬಗಳು",
+  "Senior citizens": "ಹಿರಿಯ ನಾಗರಿಕರು",
+  "OTT audience": "OTT ಪ್ರೇಕ್ಷಕರು",
+  "Theatre audience": "ಚಿತ್ರಮಂದಿರ ಪ್ರೇಕ್ಷಕರು",
+  "All audiences": "ಎಲ್ಲಾ ಪ್ರೇಕ್ಷಕರು",
+  "Emotional": "ಭಾವನಾತ್ಮಕ",
+  "Nostalgic": "ನೆನಪು ಮೂಡಿಸುವ",
+  "Warm": "ಆತ್ಮೀಯ",
+  "Beautiful": "ಸುಂದರ",
+  "Touching": "ಮನಮುಟ್ಟುವ",
+  "Slow": "ನಿಧಾನ",
+  "Confusing": "ಗೊಂದಲಕಾರಕ",
+  "Engaging": "ಹಿಡಿದಿಡುವ",
+  "Memorable": "ನೆನಪಿನಲ್ಲಿ ಉಳಿಯುವ",
+  "Average": "ಸರಾಸರಿ",
+  "Powerful": "ಪ್ರಭಾವಶಾಲಿ",
+  "Excellent": "ಅತ್ಯುತ್ತಮ",
+  "Good": "ಚೆನ್ನಾಗಿದೆ",
+  "Weak": "ದುರ್ಬಲ",
+  "Poor": "ಕಳಪೆ",
+  "Average / ಸರಾಸರಿ": "ಸರಾಸರಿ",
+  "Yes / ಹೌದು": "ಹೌದು",
+  "No / ಇಲ್ಲ": "ಇಲ್ಲ",
+  "Exceeded expectations": "ನಿರೀಕ್ಷೆಗಿಂತ ಉತ್ತಮ",
+  "Met expectations": "ನಿರೀಕ್ಷೆ ಪೂರೈಸಿತು",
+  "Below expectations": "ನಿರೀಕ್ಷೆಗಿಂತ ಕಡಿಮೆ",
+  "Clear": "ಸ್ಪಷ್ಟ",
+  "Somewhat clear": "ಸ್ವಲ್ಪ ಸ್ಪಷ್ಟ",
+  "Very good": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ",
+  "Needs improvement": "ಸುಧಾರಣೆ ಅಗತ್ಯ",
+  "Too slow": "ತುಂಬಾ ನಿಧಾನ",
+  "Slightly slow": "ಸ್ವಲ್ಪ ನಿಧಾನ",
+  "Perfect": "ಸರಿಯಾಗಿದೆ",
+  "Not emotional": "ಭಾವನಾತ್ಮಕವಾಗಿರಲಿಲ್ಲ",
+  "Theatre": "ಚಿತ್ರಮಂದಿರ",
+  "OTT": "OTT",
+  "Both": "ಎರಡೂ",
+  "Neither": "ಯಾವುದೂ ಅಲ್ಲ"
+};
+
+function feedbackLabel(lang, text) {
+  return lang === 'kn' ? (FEEDBACK_TEXT_KN[text] || FEEDBACK_OPTION_KN[text] || text) : text;
+}
+
+function feedbackOption(lang, text) {
+  if (lang === 'kn') return FEEDBACK_OPTION_KN[text] || FEEDBACK_TEXT_KN[text] || text;
+  return String(text).replace(/ \/ [\u0C80-\u0CFF].*$/u, '');
+}
+
+
+function isPosterRelatedFeedbackText(text) {
+  const value = String(text || '').toLowerCase();
+  return value.includes('poster') || value.includes('ಪೋಸ್ಟರ್');
+}
+
+
 
 const emptyRegistration = { name: '', age_group: '', social_background: '', primary_language: '', phone_number: '', remarks: '' };
 const emptySurvey = {
@@ -313,100 +522,182 @@ function AudienceSurvey({ options, landing, surveyBuilder }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [feedbackLang, setFeedbackLang] = useState('kn');
+  const [mainStep, setMainStep] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const L = (text) => feedbackLabel(feedbackLang, text);
+  const O = (text) => feedbackOption(feedbackLang, text);
   function update(field, value) { setForm((prev) => ({ ...prev, [field]: value })); }
   async function submit(event) {
     event.preventDefault(); setMessage(''); setError(''); setSaving(true);
     try {
       const payload = { ...form, overall_rating: Number(form.overall_rating), story_rating: Number(form.story_rating), acting_rating: Number(form.acting_rating), music_rating: Number(form.music_rating), pace_rating: Number(form.pace_rating), emotional_impact_rating: Number(form.emotional_impact_rating), visual_quality_rating: Number(form.visual_quality_rating), dialogue_rating: Number(form.dialogue_rating), length_rating: Number(form.length_rating) };
       await apiFetch('/api/survey', { method: 'POST', body: JSON.stringify(payload) });
-      setMessage('Thank you. Your feedback has been recorded.'); setForm(emptySurvey);
+      setMessage(''); setForm(emptySurvey); setMainStep(0); setSubmitted(true);
     } catch (err) { setError(err.message); } finally { setSaving(false); }
   }
+  const renderOptions = (items = []) => items.map((x) => <option key={x} value={x}>{O(x)}</option>);
+  const mainSteps = [L('Basic Details'), L('Ratings'), L('More Feedback'), L('Final Recommendation')];
+
+
+  if (submitted) {
+    return (
+      <section className="card form-card wide-form-card feedback-thank-you">
+        <div className="thank-you-icon">✓</div>
+        <h2>{L('Thank you for submitting')}</h2>
+        <p>{L('Your feedback has been recorded.')}</p>
+        <p className="muted">{L('Your honest response will help the makers improve the film.')}</p>
+        <div className="thank-you-actions">
+          <button type="button" className="secondary" onClick={() => { setSubmitted(false); setForm(emptySurvey); setMainStep(0); }}>
+            {L('Submit another feedback')}
+          </button>
+          <button type="button" className="primary" onClick={() => { window.location.hash = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+            {L('Back to home')}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="card form-card wide-form-card">
+    <section className="card form-card wide-form-card feedback-mobile-wizard">
       <div className="section-title">
-        <h2>{landing?.film_title || 'Film'} – Post-Screening Audience Survey</h2>
-        <p>This survey is for audience members after the screening. Phone number is used only for reference and will not be validated against registration.</p>
+        <h2>{landing?.film_title || L('Film')} – {L('Post-Screening Audience Survey')}</h2>
+        <p>{L('This survey is for audience members after the screening. Phone number is used only for reference and will not be validated against registration.')}</p>
+        <div className="feedback-language-toggle">
+          <span>{L('Language')}</span>
+          <button type="button" className={feedbackLang === 'kn' ? 'active' : ''} onClick={() => setFeedbackLang('kn')}>{L('Kannada')}</button>
+          <button type="button" className={feedbackLang === 'en' ? 'active' : ''} onClick={() => setFeedbackLang('en')}>{L('English')}</button>
+        </div>
       </div>
+
+      <div className="wizard-progress main-wizard-progress">
+        <div>
+          <strong>{L('Step')} {mainStep + 1} {L('of')} {mainSteps.length}</strong>
+          <span>{mainSteps[mainStep]}</span>
+        </div>
+        <div className="wizard-dots">
+          {mainSteps.map((s, i) => <button type="button" key={s} className={i === mainStep ? 'active' : ''} onClick={() => setMainStep(i)} />)}
+        </div>
+      </div>
+
       {message && <div className="notice success">{message}</div>}
       {error && <div className="notice error">{error}</div>}
+
       <form onSubmit={submit} className="grid-form">
-        <label>Name <span>*</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Full name" required minLength="2" /></label>
-        <label>Phone Number / Reference<input value={form.phone_number} onChange={(e) => update('phone_number', e.target.value)} placeholder="Optional phone number or reference ID" maxLength="40" /></label>
-        <label>Consent to contact for further discussion <span>*</span><select value={form.consent_contact} onChange={(e) => update('consent_contact', e.target.value)} required><option>Yes</option><option>No</option></select></label>
-        <label>Overall Experience <span>*</span><RatingSelect value={form.overall_rating} onChange={(v) => update('overall_rating', v)} /></label>
-        <label>Story <span>*</span><RatingSelect value={form.story_rating} onChange={(v) => update('story_rating', v)} /></label>
-        <label>Acting / Performances <span>*</span><RatingSelect value={form.acting_rating} onChange={(v) => update('acting_rating', v)} /></label>
-        <label>Music / Sound <span>*</span><RatingSelect value={form.music_rating} onChange={(v) => update('music_rating', v)} /></label>
-        <label>Pace / Editing <span>*</span><RatingSelect value={form.pace_rating} onChange={(v) => update('pace_rating', v)} /></label>
-        <label>Emotional Impact <span>*</span><RatingSelect value={form.emotional_impact_rating} onChange={(v) => update('emotional_impact_rating', v)} /></label>
-        <label>Visual Quality / Cinematography <span>*</span><RatingSelect value={form.visual_quality_rating} onChange={(v) => update('visual_quality_rating', v)} /></label>
-        <label>Dialogues <span>*</span><RatingSelect value={form.dialogue_rating} onChange={(v) => update('dialogue_rating', v)} /></label>
-        <label>Film Length <span>*</span><RatingSelect value={form.length_rating} onChange={(v) => update('length_rating', v)} /></label>
-        <label>Did you understand the story clearly? <span>*</span><select value={form.understood_story} onChange={(e) => update('understood_story', e.target.value)} required><option value="">Select</option>{options.understood_options.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Did you connect with the characters?<select value={form.connected_with_characters} onChange={(e) => update('connected_with_characters', e.target.value)}><option value="">Select</option>{(options.character_connection_options || []).map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Theatre or OTT fit?<select value={form.theatre_or_ott} onChange={(e) => update('theatre_or_ott', e.target.value)}><option value="">Select</option>{(options.theatre_or_ott_options || []).map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Audience Type<select value={form.audience_type} onChange={(e) => update('audience_type', e.target.value)}><option value="">Select</option>{AUDIENCE_TYPE_OPTIONS.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>One-word reaction<select value={form.one_word_reaction} onChange={(e) => update('one_word_reaction', e.target.value)}><option value="">Select</option>{ONE_WORD_REACTION_OPTIONS.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label className="full-width">Who is the right audience for this film?<select value={form.preferred_audience} onChange={(e) => update('preferred_audience', e.target.value)}><option value="">Select</option>{RIGHT_AUDIENCE_OPTIONS.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Can we use a short quote from your feedback? <select value={form.consent_quote} onChange={(e) => update('consent_quote', e.target.value)}>{(options.quote_consent_options || ['Yes','No']).map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Would you recommend this film? <span>*</span><select value={form.would_recommend} onChange={(e) => update('would_recommend', e.target.value)} required><option value="">Select</option>{options.yes_no_maybe.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label>Can we contact you for detailed feedback? <span>*</span><select value={form.contact_permission} onChange={(e) => update('contact_permission', e.target.value)} required><option value="">Select</option><option>Yes</option><option>No</option></select></label>
-        <label className="full-width">What did you like the most?<textarea value={form.liked_most} onChange={(e) => update('liked_most', e.target.value)} maxLength="1000" /></label>
-        <label className="full-width">What can be improved?<textarea value={form.improvements} onChange={(e) => update('improvements', e.target.value)} maxLength="1000" /></label>
-        <label className="full-width">Any memorable scene, character, or moment?<textarea value={form.memorable_scene} onChange={(e) => update('memorable_scene', e.target.value)} maxLength="1000" /></label>
-        <DynamicSurveyQuestions builder={surveyBuilder} form={form} update={update} />
-        <label className="full-width">Additional Remarks<textarea value={form.remarks} onChange={(e) => update('remarks', e.target.value)} maxLength="1000" /></label>
-        <button className="primary full-width" disabled={saving}>{saving ? 'Submitting...' : 'Submit Feedback'}</button>
+        {mainStep === 0 && <>
+          <label>{L('Name')} <span>*</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder={L('Full name')} required minLength="2" /></label>
+          <label>{L('Phone Number / Reference')}<input value={form.phone_number} onChange={(e) => update('phone_number', e.target.value)} placeholder={L('Optional phone number or reference ID')} maxLength="40" /></label>
+          <label>{L('Consent to contact for further discussion')} <span>*</span><select value={form.consent_contact} onChange={(e) => update('consent_contact', e.target.value)} required>{renderOptions(['Yes','No'])}</select></label>
+          <label>{L('Audience Type')}<select value={form.audience_type} onChange={(e) => update('audience_type', e.target.value)}><option value="">{L('Select')}</option>{renderOptions(AUDIENCE_TYPE_OPTIONS)}</select></label>
+        </>}
+
+        {mainStep === 1 && <>
+          <label>{L('Overall Experience')} <span>*</span><RatingSelect lang={feedbackLang} value={form.overall_rating} onChange={(v) => update('overall_rating', v)} /></label>
+          <label>{L('Story')} <span>*</span><RatingSelect lang={feedbackLang} value={form.story_rating} onChange={(v) => update('story_rating', v)} /></label>
+          <label>{L('Acting / Performances')} <span>*</span><RatingSelect lang={feedbackLang} value={form.acting_rating} onChange={(v) => update('acting_rating', v)} /></label>
+          <label>{L('Music / Sound')} <span>*</span><RatingSelect lang={feedbackLang} value={form.music_rating} onChange={(v) => update('music_rating', v)} /></label>
+          <label>{L('Pace / Editing')} <span>*</span><RatingSelect lang={feedbackLang} value={form.pace_rating} onChange={(v) => update('pace_rating', v)} /></label>
+          <label>{L('Emotional Impact')} <span>*</span><RatingSelect lang={feedbackLang} value={form.emotional_impact_rating} onChange={(v) => update('emotional_impact_rating', v)} /></label>
+          <label>{L('Visual Quality / Cinematography')} <span>*</span><RatingSelect lang={feedbackLang} value={form.visual_quality_rating} onChange={(v) => update('visual_quality_rating', v)} /></label>
+          <label>{L('Dialogues')} <span>*</span><RatingSelect lang={feedbackLang} value={form.dialogue_rating} onChange={(v) => update('dialogue_rating', v)} /></label>
+          <label>{L('Film Length')} <span>*</span><RatingSelect lang={feedbackLang} value={form.length_rating} onChange={(v) => update('length_rating', v)} /></label>
+        </>}
+
+        {mainStep === 2 && <>
+          <label>{L('Did you understand the story clearly?')} <span>*</span><select value={form.understood_story} onChange={(e) => update('understood_story', e.target.value)} required><option value="">{L('Select')}</option>{renderOptions(options.understood_options || [])}</select></label>
+          <label>{L('Did you connect with the characters?')}<select value={form.connected_with_characters} onChange={(e) => update('connected_with_characters', e.target.value)}><option value="">{L('Select')}</option>{renderOptions(options.character_connection_options || [])}</select></label>
+          <label>{L('Theatre or OTT fit?')}<select value={form.theatre_or_ott} onChange={(e) => update('theatre_or_ott', e.target.value)}><option value="">{L('Select')}</option>{renderOptions(options.theatre_or_ott_options || [])}</select></label>
+          <label>{L('One-word reaction')}<select value={form.one_word_reaction} onChange={(e) => update('one_word_reaction', e.target.value)}><option value="">{L('Select')}</option>{renderOptions(ONE_WORD_REACTION_OPTIONS)}</select></label>
+          <DynamicSurveyQuestions builder={surveyBuilder} form={form} update={update} lang={feedbackLang} />
+        </>}
+
+        {mainStep === 3 && <>
+          <label className="full-width">{L('Who is the right audience for this film?')}<select value={form.preferred_audience} onChange={(e) => update('preferred_audience', e.target.value)}><option value="">{L('Select')}</option>{renderOptions(RIGHT_AUDIENCE_OPTIONS)}</select></label>
+          <label>{L('Can we use a short quote from your feedback?')} <select value={form.consent_quote} onChange={(e) => update('consent_quote', e.target.value)}>{renderOptions(options.quote_consent_options || ['Yes','No'])}</select></label>
+          <label>{L('Would you recommend this film?')} <span>*</span><select value={form.would_recommend} onChange={(e) => update('would_recommend', e.target.value)} required><option value="">{L('Select')}</option>{renderOptions(options.yes_no_maybe || [])}</select></label>
+          <label>{L('Can we contact you for detailed feedback?')} <span>*</span><select value={form.contact_permission} onChange={(e) => update('contact_permission', e.target.value)} required><option value="">{L('Select')}</option>{renderOptions(['Yes','No'])}</select></label>
+          <label className="full-width">{L('What did you like the most?')}<textarea value={form.liked_most} onChange={(e) => update('liked_most', e.target.value)} maxLength="1000" /></label>
+          <label className="full-width">{L('What can be improved?')}<textarea value={form.improvements} onChange={(e) => update('improvements', e.target.value)} maxLength="1000" /></label>
+          <label className="full-width">{L('Any memorable scene, character, or moment?')}<textarea value={form.memorable_scene} onChange={(e) => update('memorable_scene', e.target.value)} maxLength="1000" /></label>
+          <label className="full-width">{L('Additional Remarks')}<textarea value={form.remarks} onChange={(e) => update('remarks', e.target.value)} maxLength="1000" /></label>
+        </>}
+
+        <div className="wizard-actions full-width">
+          <button type="button" className="secondary" disabled={mainStep === 0} onClick={() => setMainStep((v) => Math.max(0, v - 1))}>{L('Previous')}</button>
+          {mainStep < mainSteps.length - 1 ? (
+            <button type="button" className="primary" onClick={() => setMainStep((v) => Math.min(mainSteps.length - 1, v + 1))}>{L('Next')}</button>
+          ) : (
+            <button className="primary" disabled={saving}>{saving ? L('Submitting...') : L('Submit Feedback')}</button>
+          )}
+        </div>
       </form>
     </section>
   );
 }
 
-function DynamicSurveyQuestions({ builder, form, update }) {
-  const sections = builder?.sections || [];
+function DynamicSurveyQuestions({ builder, form, update, lang = 'en' }) {
+  const [sectionStep, setSectionStep] = useState(0);
+  const sections = (builder?.sections || [])
+    .filter((section) => !isPosterRelatedFeedbackText(section.title) && !isPosterRelatedFeedbackText(section.description))
+    .map((section) => ({
+      ...section,
+      questions: (section.questions || []).filter((q) =>
+        !isPosterRelatedFeedbackText(q.question_text) &&
+        !isPosterRelatedFeedbackText((q.options || []).join(' '))
+      ),
+    }))
+    .filter((section) => (section.questions || []).length > 0);
+
   if (!sections.length) return null;
+
+  const currentIndex = Math.min(sectionStep, sections.length - 1);
+  const section = sections[currentIndex];
+
   function setAnswer(qid, value) {
     update('custom_answers', { ...(form.custom_answers || {}), [qid]: value });
   }
-  return <>
-    {sections.map((section) => <div className="survey-section full-width" key={section.id}>
-      <h3>{section.title}</h3>
-      {section.description && <p className="muted">{section.description}</p>}
+
+  return <div className="survey-wizard full-width">
+    <div className="wizard-progress">
+      <div>
+        <strong>{feedbackLabel(lang, 'Step')} {currentIndex + 1} {feedbackLabel(lang, 'of')} {sections.length}</strong>
+        <span>{feedbackLabel(lang, section.title)}</span>
+      </div>
+      <div className="wizard-dots">
+        {sections.map((s, i) => <button type="button" key={s.id} className={i === currentIndex ? 'active' : ''} onClick={() => setSectionStep(i)} aria-label={`Go to step ${i + 1}`} />)}
+      </div>
+    </div>
+
+    <div className="survey-section full-width">
+      <h3>{feedbackLabel(lang, section.title)}</h3>
+      {section.description && <p className="muted">{feedbackLabel(lang, section.description)}</p>}
       <div className="grid-form">
-        {(section.questions || []).map((q) => <label className="full-width" key={q.id}>{q.question_text} {q.is_required ? <span>*</span> : null}
-          {q.question_type === 'multiple_choice' ? <select value={(form.custom_answers || {})[q.id] || ''} onChange={(e) => setAnswer(q.id, e.target.value)} required={!!q.is_required}><option value="">Select</option>{(q.options || []).map((opt) => <option key={opt}>{opt}</option>)}</select> : <textarea value={(form.custom_answers || {})[q.id] || ''} onChange={(e) => setAnswer(q.id, e.target.value)} required={!!q.is_required} maxLength="2000" />}
+        {(section.questions || []).map((q) => <label className="full-width" key={q.id}>{feedbackLabel(lang, q.question_text)} {q.is_required ? <span>*</span> : null}
+          {q.question_type === 'multiple_choice'
+            ? <select value={(form.custom_answers || {})[q.id] || ''} onChange={(e) => setAnswer(q.id, e.target.value)} required={!!q.is_required}>
+                <option value="">{feedbackLabel(lang, 'Select')}</option>
+                {(q.options || []).map((opt) => <option key={opt} value={opt}>{feedbackOption(lang, opt)}</option>)}
+              </select>
+            : <textarea value={(form.custom_answers || {})[q.id] || ''} onChange={(e) => setAnswer(q.id, e.target.value)} required={!!q.is_required} maxLength="2000" />}
         </label>)}
       </div>
-    </div>)}
-  </>;
+    </div>
+
+    <div className="wizard-actions">
+      <button type="button" className="secondary" disabled={currentIndex === 0} onClick={() => setSectionStep((v) => Math.max(0, v - 1))}>{feedbackLabel(lang, 'Previous')}</button>
+      <button type="button" className="secondary" disabled={currentIndex >= sections.length - 1} onClick={() => setSectionStep((v) => Math.min(sections.length - 1, v + 1))}>{feedbackLabel(lang, 'Next')}</button>
+    </div>
+  </div>;
 }
 
-function RatingSelect({ value, onChange }) { return <select value={value} onChange={(e) => onChange(e.target.value)} required>{[5,4,3,2,1].map((x) => <option key={x} value={x}>{x} - {x === 5 ? 'Excellent' : x === 4 ? 'Good' : x === 3 ? 'Average' : x === 2 ? 'Weak' : 'Poor'}</option>)}</select>; }
-
-function AdminLogin({ onLogin }) {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  async function submit(event) {
-    event.preventDefault(); setSaving(true); setError('');
-    try { const data = await apiFetch('/api/admin/login', { method: 'POST', body: JSON.stringify({ username, password }) }); localStorage.setItem('payana_admin_token', data.token); onLogin(data.user); }
-    catch (err) { setError(err.message); } finally { setSaving(false); }
-  }
-  return (
-    <section className="card login-card">
-      <h2>Admin Login</h2>
-      <p className="muted">Default login: <b>admin</b> / <b>admin123</b>. Change this after first use.</p>
-      {error && <div className="notice error">{error}</div>}
-      <form onSubmit={submit} className="grid-form one-col">
-        <label>Username<input value={username} onChange={(e) => setUsername(e.target.value)} required /></label>
-        <label>Password<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required /></label>
-        <button className="primary" disabled={saving}>{saving ? 'Signing in...' : 'Login'}</button>
-      </form>
-    </section>
-  );
+function RatingSelect({ value, onChange, lang = 'en' }) {
+  const labels = {5: 'Excellent', 4: 'Good', 3: 'Average', 2: 'Weak', 1: 'Poor'};
+  return <select value={value} onChange={(e) => onChange(e.target.value)} required>
+    {[5,4,3,2,1].map((x) => <option key={x} value={x}>{x} - {feedbackOption(lang, labels[x])}</option>)}
+  </select>;
 }
+
 
 function AdminPanel({ user, options, pages, setPages, surveyBuilder, onPublicRefresh, onAdminRefresh }) {
   const adminPages = useMemo(() => {
